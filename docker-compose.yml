@@ -1,0 +1,17 @@
+version: "2.1"
+services:
+  docker-cache:
+    image: findsec/registry-proxy:latest
+    container_name: docker-cache
+    restart: always
+    privileged: true
+    environment:
+      - PROXY_REMOTE_URL=https://registry-1.docker.io
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/ssl/your_server_ip.crt
+      - REGISTRY_HTTP_TLS_KEY=/ssl/your_server_ip.key
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./registry:/var/lib/registry
+      - ./ssl:/ssl
+    ports:
+      - 0.0.0.0:5000:5000
