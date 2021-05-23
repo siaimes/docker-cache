@@ -74,8 +74,8 @@ sudo systemctl restart docker
 ## 测试结果
 
 ```
-sudo docker rmi your_server_ip:5000/ubuntu
-sudo docker pull ubuntu
+sudo docker rmi your_server_ip:5000/library/ubuntu
+sudo docker pull library/ubuntu
 ```
 
 # 参考连接
