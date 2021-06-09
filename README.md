@@ -1,80 +1,132 @@
-
 # 简介
 
-用于配置局域网docker镜像缓存的脚本，启用ssl保证安全性。
+用于配置docker镜像的脚本，启用ssl保证安全性，兼容有无域名、兼容局域网或Internet网部署等情况。
 
 # 服务端配置
 
+## 安装docker和docker-compose
+
+[https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/)
+
+[https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
+
 ## 克隆项目
 
-```
+```bash
 git clone https://github.com/siaimes/docker-cache.git
 cd docker-cache
 ```
 
 ## 生成证书
 
-```
+生成证书，其中第二个参数为1表示生成域名证书，其他值会生成IP证书，以自己条件确定：
+
+```bash
 cd ssl
 chmod +x get_ssl.sh
-./get_ssl.sh your_server_ip
+./get_ssl.sh your_server_ip_or_domain 0
 cd ..
 ```
 
+如果端口有开放互联网访问，可以申请Let's Encrypt证书，或者配合Nginx部署更多的服务，这里就不展开了。
+
 ## 启动服务
 
-```
+```bash
 nano docker-compose
 ```
 
-修改`your_server_ip`为你的服务器IP
+其中，修改`your_server_ip_or_domain`为你的服务器IP或域名，修改`0.0.0.0:5000:5000`中第一个`5000`为你宿主机可用端口。
 
-```
+```bash
 chmod +x *.sh
 ./start.sh
+```
+
+如果你镜像的不是dockerhub，例如gcr.io，那么将
+```bash
+      - PROXY_REMOTE_URL=https://registry-1.docker.io
+```
+改为
+```bash
+      - PROXY_REMOTE_URL=https://gcr.io
 ```
 
 # 客户端配置
 
 ## 克隆项目
 
-```
+```bash
 git clone https://github.com/siaimes/docker-cache.git
 cd docker-cache
 ```
 
 ## 获取证书
 
+```bash
+sudo ./get_docker_cache_ssl.sh your_server_ip_or_domain port username /path/to/ssl
 ```
-sudo ./get_docker_cache_ssl.sh your_server_ip username /path/to/ssl
+
+如果服务器限制密码登录，用脚本拷贝证书到客户端可能会遇到问题。
+
+我们可以自己参考`get_docker_cache_ssl.sh`配置客户端：
+
+这里如果port是443可以省略，后面也是如此。
+
+1. 创建文件夹
+
+```bash
+sudo mkdir -p /etc/docker/certs.d/your_server_ip_or_domain:port/
+```
+
+2. 输出服务端的证书并拷贝到剪切板
+
+```bash
+cat .ssl/your_server_ip_or_domain.crt
+```
+
+3. 在客户端创建证书文件并粘贴服务端证书内容
+
+```bash
+sudo nano /etc/docker/certs.d/your_server_ip_or_domain:port/your_server_ip_or_domain.crt
 ```
 
 ## 测试服务
 
+如果镜像的是dockerhub，可以用下述命令测试：
+
+```bash
+sudo docker pull your_server_ip_or_domain:port/ubuntu
 ```
-sudo docker pull your_server_ip:5000/ubuntu
+
+如果镜像的是gcr.io，可以用下述命令测试：
+
+```bash
+sudo docker pull your_server_ip_or_domain:port/google-containers/kube-apiserver:v1.15.11
 ```
 
 ## 固化配置
 
-```
+如果是镜像dockerhub才可以做这一步，如果镜像的是其它仓库，请忽略。
+
+```bash
 sudo nano /etc/docker/daemon.json
 ```
 
 添加以下内容
 
-```
-{"registry-mirrors": ["https://your_server_ip:5000"]}
+```bash
+{"registry-mirrors": ["https://your_server_ip_or_domain:port"]}
 ```
 
-```
+```bash
 sudo systemctl restart docker
 ```
 
-## 测试结果
+测试结果
 
-```
-sudo docker rmi your_server_ip:5000/library/ubuntu
+```bash
+sudo docker rmi your_server_ip_or_domain:port/library/ubuntu
 sudo docker pull library/ubuntu
 ```
 
