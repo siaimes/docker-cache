@@ -101,6 +101,8 @@ sudo nano /etc/docker/certs.d/your_server_ip_or_domain:port/your_server_ip_or_do
 sudo docker pull your_server_ip_or_domain:port/library/ubuntu
 ```
 
+注意到拉取官方镜像的时候需要加上`library`，否则`Error response from daemon: manifest for ubuntu:latest not found`。
+
 如果镜像的是gcr.io，可以用下述命令测试：
 
 ```bash
