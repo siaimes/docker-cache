@@ -98,7 +98,7 @@ sudo nano /etc/docker/certs.d/your_server_ip_or_domain:port/your_server_ip_or_do
 如果镜像的是dockerhub，可以用下述命令测试：
 
 ```bash
-sudo docker pull your_server_ip_or_domain:port/ubuntu
+sudo docker pull your_server_ip_or_domain:port/library/ubuntu
 ```
 
 如果镜像的是gcr.io，可以用下述命令测试：
@@ -129,7 +129,7 @@ sudo systemctl restart docker
 
 ```bash
 sudo docker rmi your_server_ip_or_domain:port/library/ubuntu
-sudo docker pull library/ubuntu
+sudo docker pull ubuntu
 ```
 
 # 参考连接
