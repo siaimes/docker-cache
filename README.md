@@ -84,7 +84,7 @@ sudo mkdir -p /etc/docker/certs.d/your_server_ip_or_domain:port/
 2. 输出服务端的证书并拷贝到剪切板
 
 ```bash
-cat .ssl/your_server_ip_or_domain.crt
+cat ./ssl/your_server_ip_or_domain.crt
 ```
 
 3. 在客户端创建证书文件并粘贴服务端证书内容
