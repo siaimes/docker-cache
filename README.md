@@ -63,6 +63,8 @@ cd docker-cache
 
 ## 获取证书
 
+如果是可信的证书，例如Let's Encrypt签发的证书，那么无需这一步。
+
 ```bash
 sudo ./get_docker_cache_ssl.sh your_server_ip_or_domain port username /path/to/ssl
 ```
